@@ -1,0 +1,30 @@
+{
+  "name": "microstar-message",
+  "version": "0.0.0",
+  "description": "This creates and validates messages for microstar",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node test/index.js",
+    "debug": "forever -c \"node --debug-brk\" test/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jtremback/microstar-message.git"
+  },
+  "author": "jehan.tremback@gmail.com <you@example.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jtremback/microstar-message/issues"
+  },
+  "homepage": "https://github.com/jtremback/microstar-message",
+  "dependencies": {
+    "json-stable-stringify": "^1.0.0",
+    "microstar-crypto": "0.0.2"
+  },
+  "devDependencies": {
+    "tape": "^3.0.3"
+  }
+}
