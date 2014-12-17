@@ -1,6 +1,7 @@
 'use strict';
 
 var stringify = require('json-stable-stringify')
+var typeCheck =  require('type-check').typeCheck
 
 // var message = {
 //   content: JSON, // Used to store arbirary data
@@ -68,21 +69,45 @@ function sign (settings, message, callback) {
 }
 
 function validate (settings, message, prev, callback) {
-    if (!prev) {
-      debugger
-      if (message.prev) { return callback(new Error('This message expects a previous message')) }
-      if (message.sequence !== 0) { return callback(new Error('Sequence is wrong')) }
-      a()
-    } else {
-        if (message.sequence !== prev.sequence + 1) { return callback(new Error('Sequence is wrong')) }
-        if (message.timestamp < prev.timestamp) { return callback(new Error('Timestamps do not make sense')) }
-        settings.crypto.hash(prev, function (err, prev_hash) {
-          if (message.prev !== prev_hash) { return callback(new Error('Hash of previous message does not match')) }
-          a()
-        })
+    var type =[
+    '{ type: String,',
+      'feed_id: String,',
+      'timestamp: Number, ',
+      'previous: Maybe String,',
+      'sequence: Number,',
+      'signature: String,',
+      'type: String,',
+      'pub_key: String, ... }'].join(' ')
+
+    if (!typeCheck(type, message)) {
+      return callback(new Error('Invalid format'))
     }
 
-    function a () {
+    if (!prev) {
+      if (message.sequence !== 0) {
+        return callback(new Error('Sequence is wrong'))
+      }
+
+      signature()
+    } else {
+      if (message.sequence !== prev.sequence + 1) {
+        return callback(new Error('Sequence is wrong'))
+      }
+
+      if (message.timestamp < prev.timestamp) {
+        return callback(new Error('Timestamps do not make sense'))
+      }
+
+      settings.crypto.hash(prev, function (err, prev_hash) {
+        if (message.previous !== prev_hash) {
+          return callback(new Error('Hash of previous message does not match'))
+        }
+
+        signature()
+      })
+    }
+
+    function signature () {
       var _message = JSON.parse(JSON.stringify(message))
       delete _message.signature
 
@@ -94,7 +119,7 @@ function validate (settings, message, prev, callback) {
           if (bool) {
             return callback(null, true)
           } else {
-            return callback(new Error('Signature is a forgery!'))
+            return callback(new Error('Incorrect signature'))
           }
         }
       )
