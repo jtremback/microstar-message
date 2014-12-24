@@ -46,14 +46,12 @@ function create (settings, message, prev, callback) {
       previous: prev_hash || null,
       sequence: prev ? prev.sequence + 1 : 0,
       pub_key: settings.keys.publicKey
-    }, hash)
-  }
-
-  function hash (err, message) {
-    settings.crypto.hash(message, function (err, hashed) {
-      return callback(err, {
-        key: hashed,
-        value: message
+    }, function (err, message) {
+      settings.crypto.hash(message, function (err, hashed) {
+        return callback(err, {
+          key: hashed,
+          value: message
+        })
       })
     })
   }
@@ -69,7 +67,7 @@ function sign (settings, message, callback) {
 }
 
 function validate (settings, message, prev, callback) {
-    var type =[
+    var type = [
     '{ type: String,',
       'feed_id: String,',
       'timestamp: Number, ',
