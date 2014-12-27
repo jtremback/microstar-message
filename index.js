@@ -2,10 +2,11 @@
 
 var stringify = require('json-stable-stringify')
 var typeCheck =  require('type-check').typeCheck
+var r = require('ramda')
 
 // var message = {
 //   content: JSON, // Used to store arbirary data
-//   feed_id: String, // ID of the feed this message belongs to
+//   chain_id: String, // ID of the feed this message belongs to
 //   type: String, // Optional - this is to prevent collisions in the `content` property
 //
 //   timestamp: Number, // Timestamp when the message was created
@@ -19,17 +20,19 @@ module.exports = function (settings) {
   return {
     create: create.bind(null, settings),
     sign: sign.bind(null, settings),
-    validate: validate.bind(null, settings)
+    validate: validate.bind(null, settings),
+    identical: identical
   }
 }
 
 module.exports.create = create
 module.exports.sign = sign
 module.exports.validate = validate
+module.exports.identical = identical
 
 function create (settings, message, prev, callback) {
   if (prev) {
-    settings.crypto.hash(prev, function (err, prev_hash) {
+    settings.crypto.hash(stringify(prev.value), function (err, prev_hash) {
       assemble(prev_hash)
     })
   } else {
@@ -40,14 +43,14 @@ function create (settings, message, prev, callback) {
     sign(settings, {
       content: message.content,
       type: message.type,
-      feed_id: message.feed_id,
+      chain_id: message.chain_id,
       timestamp: message.timestamp || Date.now(),
 
       previous: prev_hash || null,
-      sequence: prev ? prev.sequence + 1 : 0,
+      sequence: prev ? prev.value.sequence + 1 : 0,
       pub_key: settings.keys.publicKey
     }, function (err, message) {
-      settings.crypto.hash(message, function (err, hashed) {
+      settings.crypto.hash(stringify(message), function (err, hashed) {
         return callback(err, {
           key: hashed,
           value: message
@@ -66,10 +69,14 @@ function sign (settings, message, callback) {
   })
 }
 
+function identical (a, b) {
+  return stringify(a) === stringify(b)
+}
+
 function validate (settings, message, prev, callback) {
     var type = [
     '{ type: String,',
-      'feed_id: String,',
+      'chain_id: String,',
       'timestamp: Number, ',
       'previous: Maybe String,',
       'sequence: Number,',
@@ -96,7 +103,7 @@ function validate (settings, message, prev, callback) {
         return callback(new Error('Timestamps do not make sense'))
       }
 
-      settings.crypto.hash(prev, function (err, prev_hash) {
+      settings.crypto.hash(stringify(prev), function (err, prev_hash) {
         if (message.previous !== prev_hash) {
           return callback(new Error('Hash of previous message does not match'))
         }
@@ -106,8 +113,7 @@ function validate (settings, message, prev, callback) {
     }
 
     function signature () {
-      var _message = JSON.parse(JSON.stringify(message))
-      delete _message.signature
+      var _message = r.omit(['signature'], message)
 
       settings.crypto.sign.verify(
         stringify(_message),

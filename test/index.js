@@ -14,7 +14,7 @@ mCrypto.keys('h4dfDIR+i3JfCw1T2jKr/SS/PJttebGfMMGwBvhOzS4=', function (err, keys
 function tests (mMessage) {
   var message = {
     content: 'hello',
-    feed_id: 'franklin',
+    chain_id: 'franklin',
     type: 'microstar-message|test',
     timestamp: 1418273900123
   }
@@ -26,7 +26,7 @@ function tests (mMessage) {
         value: {
           content: 'hello',
           type: 'microstar-message|test',
-          feed_id: 'franklin',
+          chain_id: 'franklin',
           timestamp: 1418273900123,
           previous: null,
           sequence: 0,
@@ -43,7 +43,7 @@ function tests (mMessage) {
     mMessage.validate({
       content: 'hello',
       type: 'microstar-message|test',
-      feed_id: 'franklin',
+      chain_id: 'franklin',
       timestamp: 1418273900123,
       previous: null,
       sequence: 0,
