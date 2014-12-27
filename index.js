@@ -19,14 +19,14 @@ var r = require('ramda')
 module.exports = function (settings) {
   return {
     create: create.bind(null, settings),
-    sign: sign.bind(null, settings),
+    makeDoc: makeDoc.bind(null, settings),
     validate: validate.bind(null, settings),
     identical: identical
   }
 }
 
 module.exports.create = create
-module.exports.sign = sign
+module.exports.makeDoc = makeDoc
 module.exports.validate = validate
 module.exports.identical = identical
 
@@ -50,14 +50,19 @@ function create (settings, message, prev, callback) {
       sequence: prev ? prev.value.sequence + 1 : 0,
       pub_key: settings.keys.publicKey
     }, function (err, message) {
-      settings.crypto.hash(stringify(message), function (err, hashed) {
-        return callback(err, {
-          key: hashed,
-          value: message
-        })
-      })
+      if (err) { return callback(err) }
+      makeDoc(settings, message, callback)
     })
   }
+}
+
+function makeDoc (settings, message, callback) {
+  settings.crypto.hash(stringify(message), function (err, hashed) {
+    return callback(err, {
+      key: hashed,
+      value: message
+    })
+  })
 }
 
 function sign (settings, message, callback) {
