@@ -20,7 +20,7 @@ function tests (mMessage) {
   }
 
   test('create', function (t) {
-    mMessage.create(message, null, function (err, doc) {
+    mMessage.format(message, null, function (err, doc) {
       t.deepEqual(doc, {
         key: 'HcytP60FiinM744AP6cbur9YdDGsWlX7NiaL95WMXzyzERasnoVexhu5ty7L1IT3BL7gMnB/sOrSStK+6XuaOQ==',
         value: {

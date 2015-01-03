@@ -18,19 +18,19 @@ var r = require('ramda')
 
 module.exports = function (settings) {
   return {
-    create: create.bind(null, settings),
+    format: format.bind(null, settings),
     makeDoc: makeDoc.bind(null, settings),
     validate: validate.bind(null, settings),
     identical: identical
   }
 }
 
-module.exports.create = create
+module.exports.format = format
 module.exports.makeDoc = makeDoc
 module.exports.validate = validate
 module.exports.identical = identical
 
-function create (settings, message, prev, callback) {
+function format (settings, message, prev, callback) {
   if (prev) {
     settings.crypto.hash(stringify(prev.value), function (err, prev_hash) {
       assemble(prev_hash)
