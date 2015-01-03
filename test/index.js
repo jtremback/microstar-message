@@ -22,7 +22,7 @@ function tests (mMessage) {
   test('create', function (t) {
     mMessage.format(message, null, function (err, doc) {
       t.deepEqual(doc, {
-        key: 'HcytP60FiinM744AP6cbur9YdDGsWlX7NiaL95WMXzyzERasnoVexhu5ty7L1IT3BL7gMnB/sOrSStK+6XuaOQ==',
+        key: 'zoenhX5h3msinnymjmCeUM3Mypgk9Sxn8548sNG9/dPOo80gT3/bAnTLoAcD48wCy9JqfLzle/HV7akz3zHtIw==',
         value: {
           content: 'hello',
           type: 'microstar-message|test',
@@ -31,7 +31,7 @@ function tests (mMessage) {
           previous: null,
           sequence: 0,
           pub_key: 'N3DyaY1o1EmjPLUkRQRu41/g/xKe/CR/cCmatA78+zY=7XuCMMWN3y/r6DeVk7YGY8j/0rWyKm3TNv3S2cbmXKk=',
-          signature: 'RjxIw+B09B/i1YUUogVepKCdCqcZH7rCyJIeZI+OFOokl5Ni1jqkndbGPI63HCpYNSdGpRGB0vdOSWmMVSw7Cw=='
+          signature: 'ix4n7ZmAf3JKpQsM5EDmXCoFVSLEUS18pDJtX4WZ/mcIaHqamkrG8h7AzUISOvUt8iIP9oAUE0eW54kqFLjYDw=='
         }
       })
 
@@ -48,7 +48,7 @@ function tests (mMessage) {
       previous: null,
       sequence: 0,
       pub_key: 'N3DyaY1o1EmjPLUkRQRu41/g/xKe/CR/cCmatA78+zY=7XuCMMWN3y/r6DeVk7YGY8j/0rWyKm3TNv3S2cbmXKk=',
-      signature: 'RjxIw+B09B/i1YUUogVepKCdCqcZH7rCyJIeZI+OFOokl5Ni1jqkndbGPI63HCpYNSdGpRGB0vdOSWmMVSw7Cw=='
+      signature: 'ix4n7ZmAf3JKpQsM5EDmXCoFVSLEUS18pDJtX4WZ/mcIaHqamkrG8h7AzUISOvUt8iIP9oAUE0eW54kqFLjYDw=='
     }, null, function (err, bool) {
       t.error(err)
       t.ok(bool)
