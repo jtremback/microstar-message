@@ -126,7 +126,7 @@ function validate (settings, message, prev, callback) {
         message.pub_key,
         function (err, bool) {
           if (bool) {
-            return callback(null, true)
+            return callback(null, message)
           } else {
             return callback(new Error('Incorrect signature'))
           }
