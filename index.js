@@ -16,19 +16,12 @@ var r = require('ramda')
 //   signature: String, // Signature of the rest of the message
 // }
 
-module.exports = function (settings) {
-  return {
-    format: format.bind(null, settings),
-    makeDoc: makeDoc.bind(null, settings),
-    validate: validate.bind(null, settings),
-    identical: identical
-  }
+module.exports = {
+  format: format,
+  makeDoc: makeDoc,
+  validate: validate,
+  identical: identical
 }
-
-module.exports.format = format
-module.exports.makeDoc = makeDoc
-module.exports.validate = validate
-module.exports.identical = identical
 
 function format (settings, message, prev, callback) {
   if (prev) {

@@ -5,13 +5,13 @@ var mMessage = require('../')
 var mCrypto = require('microstar-crypto')
 
 mCrypto.keys('h4dfDIR+i3JfCw1T2jKr/SS/PJttebGfMMGwBvhOzS4=', function (err, keys) {
-  tests(mMessage({
+  tests({
     crypto: mCrypto,
     keys: keys
-  }))
+  })
 })
 
-function tests (mMessage) {
+function tests (settings) {
   var message = {
     content: 'hello',
     chain_id: 'franklin',
@@ -20,7 +20,7 @@ function tests (mMessage) {
   }
 
   test('create', function (t) {
-    mMessage.format(message, null, function (err, doc) {
+    mMessage.format(settings, message, null, function (err, doc) {
       t.deepEqual(doc, {
         key: 'zoenhX5h3msinnymjmCeUM3Mypgk9Sxn8548sNG9/dPOo80gT3/bAnTLoAcD48wCy9JqfLzle/HV7akz3zHtIw==',
         value: {
@@ -40,7 +40,7 @@ function tests (mMessage) {
   })
 
   test('validate', function (t) {
-    mMessage.validate({
+    mMessage.validate(settings, {
       content: 'hello',
       type: 'microstar-message|test',
       chain_id: 'franklin',
