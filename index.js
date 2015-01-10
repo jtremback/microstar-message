@@ -41,7 +41,7 @@ function format (settings, message, prev, callback) {
 
       previous: prev_hash || null,
       sequence: prev ? prev.value.sequence + 1 : 0,
-      pub_key: settings.keys.publicKey
+      pub_key: settings.keys.public_key
     }, function (err, message) {
       if (err) { return callback(err) }
       makeDoc(settings, message, callback)
@@ -61,7 +61,7 @@ function makeDoc (settings, message, callback) {
 function sign (settings, message, callback) {
   var string = stringify(message)
 
-  settings.crypto.sign(string, settings.keys.secretKey, function (err, signature) {
+  settings.crypto.sign(string, settings.keys.secret_key, function (err, signature) {
     message.signature = signature
     return callback(err, message)
   })
