@@ -2,7 +2,7 @@
 
 var test = require('tape')
 var mMessage = require('../')
-var mCrypto = require('microstar-crypto')
+var mCrypto = require('../../microstar-crypto')
 
 mCrypto.keys('h4dfDIR+i3JfCw1T2jKr/SS/PJttebGfMMGwBvhOzS4=', function (err, keys) {
   tests({
