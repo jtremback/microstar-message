@@ -12,20 +12,21 @@ var r = require('ramda')
 //   timestamp: Number, // Timestamp when the message was created
 //   previous: String, // Hash of the previous message in the feed
 //   sequence: Number, // Ordinal sequence of this message in the feed
-//   pub_key: String, // Public key of the author
+//   public_key: String, // Public key of the author
 //   signature: String, // Signature of the rest of the message
 // }
 
 module.exports = {
-  format: format,
+  makeEnvelope: makeEnvelope,
   makeDoc: makeDoc,
   validate: validate,
   identical: identical
 }
 
-function format (settings, message, prev, callback) {
+function makeEnvelope (settings, message, prev, callback) {
   if (prev) {
-    settings.crypto.hash(stringify(prev.value), function (err, prev_hash) {
+    settings.crypto.hash(stringify(prev), function (err, prev_hash) {
+      if (err) { callback(err) }
       assemble(prev_hash)
     })
   } else {
@@ -33,18 +34,20 @@ function format (settings, message, prev, callback) {
   }
 
   function assemble (prev_hash) {
-    sign(settings, {
+    message = {
       content: message.content,
       type: message.type,
       chain_id: message.chain_id,
       timestamp: message.timestamp || Date.now(),
 
       previous: prev_hash || null,
-      sequence: prev ? prev.value.sequence + 1 : 0,
-      pub_key: settings.keys.public_key
-    }, function (err, message) {
-      if (err) { return callback(err) }
-      makeDoc(settings, message, callback)
+      sequence: prev ? prev.sequence + 1 : 0,
+      public_key: settings.keys.public_key
+    }
+    settings.crypto.sign(stringify(message), settings.keys.secret_key, function (err, signature) {
+      message.signature = signature
+      debugger
+      return callback(err, message)
     })
   }
 }
@@ -55,15 +58,6 @@ function makeDoc (settings, message, callback) {
       key: hashed,
       value: message
     })
-  })
-}
-
-function sign (settings, message, callback) {
-  var string = stringify(message)
-
-  settings.crypto.sign(string, settings.keys.secret_key, function (err, signature) {
-    message.signature = signature
-    return callback(err, message)
   })
 }
 
@@ -80,10 +74,10 @@ function validate (settings, message, prev, callback) {
       'sequence: Number,',
       'signature: String,',
       'type: String,',
-      'pub_key: String, ... }'].join(' ')
+      'public_key: String, ... }'].join(' ')
 
     if (!typeCheck(type, message)) {
-      return callback(new Error('Invalid format'))
+      return callback(new Error('Invalid message format'))
     }
 
     if (!prev) {
@@ -111,12 +105,13 @@ function validate (settings, message, prev, callback) {
     }
 
     function signature () {
+      debugger
       var _message = r.omit(['signature'], message)
 
       settings.crypto.sign.verify(
         stringify(_message),
         message.signature,
-        message.pub_key,
+        message.public_key,
         function (err, bool) {
           if (bool) {
             return callback(null, message)
