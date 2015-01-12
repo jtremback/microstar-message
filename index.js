@@ -46,7 +46,6 @@ function makeEnvelope (settings, message, prev, callback) {
     }
     settings.crypto.sign(stringify(message), settings.keys.secret_key, function (err, signature) {
       message.signature = signature
-      debugger
       return callback(err, message)
     })
   }
@@ -105,7 +104,6 @@ function validate (settings, message, prev, callback) {
     }
 
     function signature () {
-      debugger
       var _message = r.omit(['signature'], message)
 
       settings.crypto.sign.verify(
