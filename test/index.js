@@ -20,8 +20,8 @@ function tests (settings) {
   }
 
   test('create', function (t) {
-    mMessage.makeEnvelope(settings, message, null, function (err, message) {
-      mMessage.makeDoc(settings, message, function (err, doc) {
+    mMessage.createEnvelope(settings, message, null, function (err, message) {
+      mMessage.createDoc(settings, message, function (err, doc) {
         t.deepEqual(doc, {
           key: '7SE9prmjZcP9ierHwYAqnE8SzDPpv7BDR5sdHMAHuyUyF5PgS/JQ381qXZKEqn9IxfjIUuS0Pj1PvmLu/Xvrtg==',
           value: {

@@ -17,13 +17,19 @@ var r = require('ramda')
 // }
 
 module.exports = {
-  makeEnvelope: makeEnvelope,
-  makeDoc: makeDoc,
+  createSequence: createSequence,
+  createEnvelope: createEnvelope,
+  createDoc: createDoc,
   validate: validate,
   identical: identical
 }
 
-function makeEnvelope (settings, message, prev, callback) {
+function createSequence (settings, message, prev) {
+  message.sequence = prev ? prev.sequence + 1 : 0
+  return message
+}
+
+function createEnvelope (settings, message, prev, callback) {
   if (prev) {
     settings.crypto.hash(stringify(prev), function (err, prev_hash) {
       if (err) { callback(err) }
@@ -37,11 +43,11 @@ function makeEnvelope (settings, message, prev, callback) {
     message = {
       content: message.content,
       type: message.type,
+      sequence: message.sequence,
       chain_id: message.chain_id,
       timestamp: message.timestamp || Date.now(),
 
       previous: prev_hash || null,
-      sequence: prev ? prev.sequence + 1 : 0,
       public_key: settings.keys.public_key
     }
     settings.crypto.sign(stringify(message), settings.keys.secret_key, function (err, signature) {
@@ -51,7 +57,7 @@ function makeEnvelope (settings, message, prev, callback) {
   }
 }
 
-function makeDoc (settings, message, callback) {
+function createDoc (settings, message, callback) {
   settings.crypto.hash(stringify(message), function (err, hashed) {
     return callback(err, {
       key: hashed,
