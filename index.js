@@ -17,16 +17,10 @@ var r = require('ramda')
 // }
 
 module.exports = {
-  createSequence: createSequence,
   createEnvelope: createEnvelope,
   createDoc: createDoc,
   validate: validate,
   identical: identical
-}
-
-function createSequence (settings, message, prev) {
-  message.sequence = prev ? prev.sequence + 1 : 0
-  return message
 }
 
 function createEnvelope (settings, message, prev, callback) {
@@ -43,7 +37,7 @@ function createEnvelope (settings, message, prev, callback) {
     message = {
       content: message.content,
       type: message.type,
-      sequence: message.sequence,
+      sequence: prev ? prev.sequence + 1 : 0,
       chain_id: message.chain_id,
       timestamp: message.timestamp || Date.now(),
 
@@ -78,7 +72,6 @@ function validate (settings, message, prev, callback) {
       'previous: Maybe String,',
       'sequence: Number,',
       'signature: String,',
-      'type: String,',
       'public_key: String, ... }'].join(' ')
 
     if (!typeCheck(type, message)) {
