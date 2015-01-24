@@ -15,7 +15,7 @@ function tests (settings) {
   var message = {
     content: 'hello',
     chain_id: 'franklin',
-    type: 'microstar-message|test',
+    type: 'microstar-message:test',
     timestamp: 1418273900123
   }
 
@@ -23,16 +23,16 @@ function tests (settings) {
     mMessage.createEnvelope(settings, message, null, function (err, message) {
       mMessage.createDoc(settings, message, function (err, doc) {
         t.deepEqual(doc, {
-          key: '7SE9prmjZcP9ierHwYAqnE8SzDPpv7BDR5sdHMAHuyUyF5PgS/JQ381qXZKEqn9IxfjIUuS0Pj1PvmLu/Xvrtg==',
+          key: 'X6lFU40LFODGkbUqYTcyRToLNjIQTan7IrBIfvtdcvgOMhIB+yRxE7ObaaeUIx7UKrIsW45pzc8gfkmJJw+mwg==',
           value: {
             chain_id: 'franklin',
             content: 'hello',
             previous: null,
             public_key: 'N3DyaY1o1EmjPLUkRQRu41/g/xKe/CR/cCmatA78+zY=7XuCMMWN3y/r6DeVk7YGY8j/0rWyKm3TNv3S2cbmXKk=',
             sequence: 0,
-            signature: 'zunrWte2/7fbB3yLc82PE3JGSw0+Zvus2u4wSJ0Ms3LnRjBaYejp6way+YDAvjktC6yjN1X6fSYhxat18EmTAA==',
+            signature: 'JNmYEl1sIpEiXXNqxiQfMtJZXaESPqQWc/G3qGJ2A/QuuVEqJEPUGnzXHZfe0rYmmVUNmCwApPMYFVuXyK+jCQ==',
             timestamp: 1418273900123,
-            type: 'microstar-message|test'
+            type: 'microstar-message:test'
           }
         })
 
