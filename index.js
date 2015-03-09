@@ -65,57 +65,57 @@ function identical (a, b) {
 }
 
 function validate (settings, message, prev, callback) {
-    var type = [
-    '{ type: String,',
-      'chain_id: String,',
-      'timestamp: Number, ',
-      'previous: Maybe String,',
-      'sequence: Number,',
-      'signature: String,',
-      'public_key: String, ... }'].join(' ')
+  var type = [
+  '{ type: String,',
+    'chain_id: String,',
+    'timestamp: Number, ',
+    'previous: Maybe String,',
+    'sequence: Number,',
+    'signature: String,',
+    'public_key: String, ... }'].join(' ')
 
-    if (!typeCheck(type, message)) {
-      return callback(new Error('Invalid message format'))
+  if (!typeCheck(type, message)) {
+    return callback(new Error('Invalid message format'))
+  }
+
+  if (!prev) {
+    if (message.sequence !== 0) {
+      return callback(new Error('No previous message, but sequence is not 0'))
     }
 
-    if (!prev) {
-      if (message.sequence !== 0) {
-        return callback(new Error('Sequence is wrong'))
+    signature()
+  } else {
+    if (message.sequence !== prev.sequence + 1) {
+      return callback(new Error('Sequence is not previous sequence + 1'))
+    }
+
+    if (message.timestamp < prev.timestamp) {
+      return callback(new Error('Timestamp is before previous message timestamp'))
+    }
+
+    settings.crypto.hash(stringify(prev), function (err, prev_hash) {
+      if (message.previous !== prev_hash) {
+        return callback(new Error('Hash of previous message does not match'))
       }
 
       signature()
-    } else {
-      if (message.sequence !== prev.sequence + 1) {
-        return callback(new Error('Sequence is wrong'))
-      }
+    })
+  }
 
-      if (message.timestamp < prev.timestamp) {
-        return callback(new Error('Timestamps do not make sense'))
-      }
+  function signature () {
+    var _message = r.omit(['signature'], message)
 
-      settings.crypto.hash(stringify(prev), function (err, prev_hash) {
-        if (message.previous !== prev_hash) {
-          return callback(new Error('Hash of previous message does not match'))
+    settings.crypto.sign.verify(
+      stringify(_message),
+      message.signature,
+      message.public_key,
+      function (err, bool) {
+        if (bool) {
+          return callback(null, message)
+        } else {
+          return callback(new Error('Incorrect signature'))
         }
-
-        signature()
-      })
-    }
-
-    function signature () {
-      var _message = r.omit(['signature'], message)
-
-      settings.crypto.sign.verify(
-        stringify(_message),
-        message.signature,
-        message.public_key,
-        function (err, bool) {
-          if (bool) {
-            return callback(null, message)
-          } else {
-            return callback(new Error('Incorrect signature'))
-          }
-        }
-      )
-    }
+      }
+    )
+  }
 }
