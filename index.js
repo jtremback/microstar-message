@@ -37,7 +37,7 @@ function createEnvelope (settings, message, prev, callback) {
     message = {
       content: message.content,
       type: message.type,
-      sequence: prev ? prev.sequence + 1 : 0,
+      sequence: prev ? prev.sequence + 1 : 1,
       chain_id: message.chain_id,
       timestamp: message.timestamp || Date.now(),
 
@@ -79,8 +79,8 @@ function validate (settings, message, prev, callback) {
   }
 
   if (!prev) {
-    if (message.sequence !== 0) {
-      return callback(new Error('No previous message, but sequence is not 0'))
+    if (message.sequence !== 1) {
+      return callback(new Error('No previous message, but sequence is not 1'))
     }
 
     signature()
